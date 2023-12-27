@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Project Checker - Homepage</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/projectDetail.css') }}">
+    <script>
+        function removeDuplicates() {
+            var input = document.getElementById('project_title');
+            var words = input.value.split(/\s+/); // Split words by spaces
+            var uniqueWords = Array.from(new Set(words)).join(' '); // Use Set to remove duplicates
+            input.value = uniqueWords;
+        }
+    </script>
+</head>
+<body>
+  <div class="container">
+
+    <div class="fill-container">
+        <p><a href="{{ url_for('login') }}">Log-in</a></p>
+        <!-- <p><a href="/register">Register</a></p> -->
+    </div>
+
+    <h1>Explore Projects</h1>
+
+    <form action="/search_project" method="post">
+        <label for="project_title">Enter Keywords (separated by spaces):</label>
+        <input type="text" id="project_title" name="project_title">
+        <input type="button" value="Remove Duplicates" onclick="removeDuplicates()">
+        <input type="submit" value="Search">
+    </form>
+
+    <div class="box-container">
+        {% for project in result %}
+            <div class="box">
+                <div class="image">
+                    <img src="{{ url_for('static', filename='/Image/kk.png')}}" alt="Food">
+                </div>
+                <div class="project-item">
+                    <h2 class="title">{{ project[1] }}</h2>
+                    <p class="descriprion">{{ project[4] }}</p>
+                    <span class="project-link" data-id="{{ project[0] }}">{{ project[1] }}</span>
+                    <div class="project-details" style="display: none;"></div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    
+    <div id="load-more">Load More</div>
+  </div>
+
+
+  <script>
+
+      let loadMoreBtn = document.querySelector("#load-more");
+      let currentItem = 3;
+
+      loadMoreBtn.onclick = () => {
+          let boxes = [...document.querySelectorAll('.container .box-container .box')];
+          for(var i = currentItem; i < currentItem + 3; i++){
+              boxes[i].style.display = 'inline-block';
+          }
+          currentItem += 3;
+
+          if(currentItem >= boxes.length){
+              loadMoreBtn.style.display = 'none';
+          }
+      };
+
+      document.addEventListener('DOMContentLoaded', function () {
+          const projectLinks = document.querySelectorAll('.project-link');
+          projectLinks.forEach(link => {
+              link.addEventListener('click', function () {
+                  const projectId = this.getAttribute('data-id');
+                  const detailsDiv = this.nextElementSibling;
+
+                  if (detailsDiv.classList.contains('open')) {
+                      detailsDiv.classList.remove('open');
+                      setTimeout(() => {
+                          detailsDiv.style.display = 'none';
+                      }, 300); // Match the transition duration
+                  } else {
+                      // Hide all other open project details before displaying the current one
+                      projectLinks.forEach(link => {
+                          const otherDetailsDiv = link.nextElementSibling;
+                          if (otherDetailsDiv !== detailsDiv && otherDetailsDiv.classList.contains('open')) {
+                              otherDetailsDiv.classList.remove('open');
+                              setTimeout(() => {
+                                  otherDetailsDiv.style.display = 'none';
+                              }, 300); // Match the transition duration
+                          }
+                      });
+                      
+                      fetch(`/project/${projectId}`)
+                          .then(response => response.text())
+                          .then(data => {
+                              detailsDiv.innerHTML = data;
+                              detailsDiv.classList.add('open');
+                              detailsDiv.style.display = 'block';
+                          });
+                  }
+              });
+          });
+      });
+
+  </script>
+</body>
+</html>

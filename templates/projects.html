@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Project Checker - Project Registration</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/projectReg.css') }}">
+</head>
+<body>
+   <section>
+        <div class="container">
+            <h2>Welcome, {{ name }}</h2>
+            <h3>To School Project Checker</h3>
+        </div>    
+            <!-- {% if message %}
+                <p>{{ message }}</p>
+            {% endif %} -->
+
+            <!-- Display user's projects here -->
+            <div class="wrapper">
+                <form action="/add_project" method="post">
+                    <div>
+                        <label for="project_title"></label>
+                        <div class="input-box">
+                            <input type="text" id="project_title" name="project_title" placeholder="Project Title" required>
+                        </div>
+                    
+                        <label for="student_name"></label>
+                        <div class="input-box">
+                            <input type="text" id="student_name" name="student_name" placeholder="Student Name" required>
+                        </div>
+                        
+                        <label for="registration_number"></label>
+                        <div class="input-box">
+                            <input type="text" id="registration_number" name="registration_number" placeholder="Registration Number" required>
+                        </div>
+                        
+                        <label for="description"></label>
+                        <div class="input-box">
+                            <textarea id="description" name="description" placeholder="Project Description"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="chk-box">
+                        <label for="done">Project Completed?</label>
+                        <input type="checkbox" id="done" name="done" value="1">
+                    </div>
+
+                    <div class="btns">
+                        <button type="submit">Check & Save</button>
+                    </div>
+
+                </form>
+                
+                <div><a href="{{ url_for('home') }}">Logout</a></div>
+            </div>
+            
+        <div class="query-result">    
+            {% if message %}
+                {% if message %}
+                    <p>Project '{{ project_name }}' has been conducted before.</p>
+                {% else %}
+                    <p>Project '{{ project_name }}' has not been conducted before.</p>
+                {% endif %}
+            {% endif %}
+        </div>
+   </section>
+</body>
+</html>
